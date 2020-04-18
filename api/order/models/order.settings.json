@@ -15,9 +15,6 @@
       "via": "orders",
       "dominant": true
     },
-    "number": {
-      "type": "string"
-    },
     "total_in_cents": {
       "type": "biginteger"
     },
@@ -43,6 +40,9 @@
       "type": "string"
     },
     "shipping_zip": {
+      "type": "string"
+    },
+    "payment_intent_id": {
       "type": "string"
     }
   }

@@ -17,12 +17,22 @@ const shouldPayShipping = (cart) => {
     return subTotal < FREE_SHIPPING_THRESHOLD
 }
 
+const cartTaxes = (cart) => {
+    const subTotal = cartSubtotal(cart)
+
+    return subTotal * TAX_RATE
+}
+
 const cartTotal = (cart) => {
+    if(cart.length === 0){
+        return 0
+    }
+    
     const subTotal = cartSubtotal(cart)
 
     const shipping = shouldPayShipping(cart) ? SHIPPING_RATE : 0
 
-    const total = subTotal + subTotal * TAX_RATE + shipping
+    const total = subTotal + cartTaxes(cart) + shipping
 
     return Math.round(total)
 }
@@ -31,4 +41,5 @@ module.exports = {
     cartSubtotal,
     shouldPayShipping,
     cartTotal,
+    cartTaxes
 }

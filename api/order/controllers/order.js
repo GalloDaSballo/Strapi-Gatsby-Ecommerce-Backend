@@ -1,5 +1,7 @@
 'use strict';
 const stripe = require('stripe')('sk_test_9TbYHeQTlQMOP6TZLJiTS4Kw005fLWoKRh');
+const { sanitizeEntity } = require('strapi-utils');
+
 
 /**
  * Read the documentation (https://strapi.io/documentation/3.0.0-beta.x/concepts/controllers.html#core-controllers)
@@ -63,5 +65,111 @@ module.exports = {
             return {error: err.raw.message}
         }
         
-    }
+    },
+    
+    create: async (ctx) => {
+        const {
+            paymentIntent,
+
+            shipping_name,
+            shipping_address,
+            shipping_state,
+            shipping_country,
+            shipping_zip,
+
+            cart
+        } = ctx.request.body
+
+        //Payment intent for validation
+        let paymentInfo
+
+        try{
+            paymentInfo  = await stripe.paymentIntents.retrieve(paymentIntent.id)
+            if(paymentInfo.status !== 'succeeded'){
+                throw {message: "You still have to pay"}
+            }
+        } catch(err){
+            ctx.response.status = 402
+            return {error: err.message}
+        }
+
+        //Check if paymentIntent was not already used to generate an order
+        const alreadyExistingOrder = await strapi.services.order.find({
+            payment_intent_id: paymentIntent.id
+        })
+
+        if(alreadyExistingOrder && alreadyExistingOrder.length > 0){
+            ctx.response.status = 402
+            return {error: "This payment intent was already used"}
+        }
+
+        const payment_intent_id = paymentIntent.id
+    
+
+        //Check if the data is proper
+        console.log("order.create cart", cart)
+        let product_qty = []
+        let products = []
+        let sanitizedCart = []
+
+
+
+        await Promise.all(cart.map(async product => {
+            const foundProduct = await strapi.services.product.findOne({
+                id: product.strapiId
+            })
+
+            if(foundProduct){
+                product_qty.push({
+                    id: product.strapiId,
+                    qty: product.qty
+                })
+
+                products.push(foundProduct)
+
+                sanitizedCart.push(
+                    {...foundProduct, ...{qty: product.qty}}
+                )
+            }
+
+
+            return foundProduct
+        }))
+
+        console.log("order.create product_qty", product_qty)
+        console.log("order.create products", products)
+        console.log("order.create sanitizedCart", sanitizedCart)
+
+        //Fetch the products and add them to the products array, also set up product_qty
+
+        let subtotal_in_cents = strapi.config.functions.cart.cartSubtotal(sanitizedCart)
+        let taxes_in_cents = strapi.config.functions.cart.cartTaxes(sanitizedCart)
+        let total_in_cents = strapi.config.functions.cart.cartTotal(sanitizedCart)
+        
+        if(paymentInfo.amount !== total_in_cents){
+            ctx.response.status = 402
+            return {error: "The total to be paid is different from the total from the Payment Intent"}
+        }
+
+        const entry = {
+            shipping_name,
+            shipping_address,
+            shipping_state,
+            shipping_country,
+            shipping_zip,
+
+            product_qty,
+            products,
+
+            subtotal_in_cents,
+            taxes_in_cents,
+            total_in_cents,
+
+            payment_intent_id
+        }
+
+        const entity = await strapi.services.order.create(entry);
+
+        return sanitizeEntity(entity, { model: strapi.models.order });
+    },
 };
