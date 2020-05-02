@@ -5,7 +5,7 @@ const SHIPPING_RATE = process.env.SHIPPING_RATE || 500
 const cartSubtotal = (cart) => {
     //Sum up all of the individual product costs
     const subTotal = cart.reduce((counter, product) => {
-        return counter + product.price_in_cent * product.qty
+        return counter + parseInt(product.price_in_cent) * product.qty
     }, 0)
 
     return subTotal
