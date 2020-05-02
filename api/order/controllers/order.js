@@ -143,8 +143,11 @@ module.exports = {
         //Fetch the products and add them to the products array, also set up product_qty
 
         let subtotal_in_cents = strapi.config.functions.cart.cartSubtotal(sanitizedCart)
+        console.log("subtotal_in_cents", subtotal_in_cents)
         let taxes_in_cents = strapi.config.functions.cart.cartTaxes(sanitizedCart)
+        console.log("taxes_in_cents", taxes_in_cents)
         let total_in_cents = strapi.config.functions.cart.cartTotal(sanitizedCart)
+        console.log("total_in_cents", total_in_cents)
         
         if(paymentInfo.amount !== total_in_cents){
             ctx.response.status = 402
