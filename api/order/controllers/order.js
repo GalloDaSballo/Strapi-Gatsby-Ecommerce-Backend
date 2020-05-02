@@ -149,6 +149,7 @@ module.exports = {
         let total_in_cents = parseInt(strapi.config.functions.cart.cartTotal(sanitizedCart))
         console.log("total_in_cents", total_in_cents)
         
+        
         if(paymentInfo.amount !== total_in_cents){
             ctx.response.status = 402
             return {error: "The total to be paid is different from the total from the Payment Intent"}
