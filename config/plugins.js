@@ -1,0 +1,16 @@
+module.exports = ({ env }) => ({
+    upload: {
+      provider: 'aws-s3',
+      providerOptions: {
+        accessKeyId: env('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: env('AWS_ACCESS_SECRET'),
+        region: env('AWS_REGION'),
+        params: {
+          Bucket: env('AWS_BUCKET'),
+        },
+      },
+    }
+
+    //Add more entries to the object for more plugins
+    //Or comment this if you want to use local upload
+  });

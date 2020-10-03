@@ -1,5 +1,5 @@
 'use strict';
-const stripe = require('stripe')('sk_test_9TbYHeQTlQMOP6TZLJiTS4Kw005fLWoKRh');
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 const { sanitizeEntity } = require('strapi-utils');
 
 
