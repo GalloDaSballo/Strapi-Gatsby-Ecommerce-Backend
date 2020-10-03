@@ -46,3 +46,6 @@ You MAY have to add this to the database.js file.
 ssl: {'rejectUnauthorized': false}
 ```
 Use the Q&A for more help
+
+## Video Help
+https://www.udemy.com/course/the-complete-strapi-course/learn/lecture/22568176/
