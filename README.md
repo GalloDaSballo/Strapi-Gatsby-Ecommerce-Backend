@@ -23,7 +23,7 @@ yarn develop
 Set up the following environment variable
 ### Set up Stripe
 ```
-STRIPE_PK
+STRIPE_KEY
 ```
 
 ### Configure AWS Plugin by adding
