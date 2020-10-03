@@ -36,9 +36,13 @@ AWS_BUCKET
 
 ### Configure Database (PG) by adding
 ```
-DATABASE_HOST
-DATABASE_PORT
-DATABASE_NAME
-DATABASE_USERNAME
-DATABASE_PASSWORD
+DATABASE_URL
 ```
+By default this will be automatically added when you provision your first Postgres Database.
+
+Notice that you may have some issues if you use the Paid version of PG. 
+You MAY have to add this to the database.js file. 
+```
+ssl: {'rejectUnauthorized': false}
+```
+Use the Q&A for more help
